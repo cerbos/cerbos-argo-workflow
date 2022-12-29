@@ -1,0 +1,73 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: cerbos-ci-
+spec:
+  entrypoint: main
+  #`argo submit ci.yaml -p branch=main repoPath=/cerbos repo=https://github.com/cerbos/cerbos-argo-workflow.git`
+  arguments:
+    parameters:
+      - name: repo
+        value: https://github.com/cerbos/cerbos-argo-workflow.git
+      - name: branch
+        value: main
+      - name: repoPath
+        value: /
+      - name: cerbosVersion
+        value: latest
+  # a temporary volume, named workdir, will be used as a working directory
+  # for this workflow. This volume is passed around from step to step.
+  volumeClaimTemplates:
+    - metadata:
+        name: workdir
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 512Mi
+
+  templates:
+    - name: main
+      dag:
+        tasks:
+          - name: clone
+            template: clone
+          - name: validate
+            template: validate
+            dependencies:
+              - clone
+          - name: test
+            template: test
+            dependencies:
+              - validate
+
+    - name: clone
+      container:
+        volumeMounts:
+          - mountPath: /src
+            name: workdir
+        image: golang:1.18
+        workingDir: /src
+        command: [sh, -euxc]
+        args:
+          - |
+            git clone -v -b "{{workflow.parameters.branch}}" --single-branch --depth 1 {{workflow.parameters.repo}} .
+
+    - name: validate
+      container:
+        volumeMounts:
+          - mountPath: /src
+            name: workdir
+        image: ghcr.io/cerbos/cerbos:{{workflow.parameters.cerbosVersion}}
+        workingDir: /src
+        args:
+          ["compile", "--skip-tests", "/src{{workflow.parameters.repoPath}}"]
+
+    - name: test
+      container:
+        volumeMounts:
+          - mountPath: /src
+            name: workdir
+        image: ghcr.io/cerbos/cerbos:{{workflow.parameters.cerbosVersion}}
+        workingDir: /src
+        args: ["compile", "/src{{workflow.parameters.repoPath}}"]
