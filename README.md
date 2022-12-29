@@ -1,5 +1,13 @@
 # Cerbos with Argo Workflow
 
+## Prerequisite
+
+- [Kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+- [Argo CLI](https://github.com/argoproj/argo-workflows/releases/latest)
+- [Helm](https://helm.sh/docs/intro/install/)
+
+
 ## Setup Argo in Cluster
 See https://argoproj.github.io/argo-workflows/quick-start/
 
@@ -17,25 +25,19 @@ kubectl patch deployment \
 ]}]'
 ```
 
-Port forward into the cluster
-```
-kubectl -n argo port-forward deployment/argo-server 2746:2746
-```
-
-## Install the CLI
-See https://github.com/argoproj/argo-workflows/releases/latest
-```
-curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.4.4/argo-darwin-amd64.gz
-gunzip argo-darwin-amd64.gz
-chmod +x argo-darwin-amd64
-mv ./argo-darwin-amd64 /usr/local/bin/argo
-argo version
+## Deploy our sample app
+```s
+helm repo add cerbos https://download.cerbos.dev/helm-charts
+helm repo update
+helm install cerbos cerbos/cerbos --version=0.23.1 --values=demo-app/cerbos-values.yaml
 ```
 
 ## Submit Job
 ```
-argo submit -n argo --watch https://raw.githubusercontent.com/cerbos/cerbos-argo-workflow/main/ci.yaml
+argo submit -n argo --watch https://raw.githubusercontent.com/cerbos/cerbos-argo-workflow/main/ci.yaml -p branch=main -p repoPath=/cerbos -p repo=https://github.com/cerbos/cerbos-argo-workflow.git
+```
 
-
-argo submit -n argo --watch ci.yaml -p branch=main -p repoPath=/cerbos -p repo=https://github.com/cerbos/cerbos-argo-workflow.git
+Port forward into the cluster to see the UI
+```
+kubectl -n argo port-forward deployment/argo-server 2746:2746
 ```

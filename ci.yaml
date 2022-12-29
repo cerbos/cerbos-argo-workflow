@@ -15,6 +15,12 @@ spec:
         value: /
       - name: cerbosVersion
         value: latest
+      - name: cerbosHost
+        value: cerbos.default.svc.cluster.local:3593
+      - name: cerbosAdminUser
+        value: cerbos
+      - name: cerbosAdminPass
+        value: cerbosAdmin
   # a temporary volume, named workdir, will be used as a working directory
   # for this workflow. This volume is passed around from step to step.
   volumeClaimTemplates:
@@ -40,6 +46,10 @@ spec:
             template: test
             dependencies:
               - validate
+          - name: reload-cerbos
+            template: reload-cerbos
+            dependencies:
+              - test
 
     - name: clone
       container:
@@ -71,3 +81,18 @@ spec:
         image: ghcr.io/cerbos/cerbos:{{workflow.parameters.cerbosVersion}}
         workingDir: /src
         args: ["compile", "/src{{workflow.parameters.repoPath}}"]
+
+    - name: reload-cerbos
+      container:
+        image: ghcr.io/cerbos/cerbosctl:{{workflow.parameters.cerbosVersion}}
+        args:
+          [
+            "--server={{workflow.parameters.cerbosHost}}",
+            "--username={{workflow.parameters.cerbosAdminUser}}",
+            "--password={{workflow.parameters.cerbosAdminPass}}",
+            "--insecure",
+            "--plaintext",
+            "store",
+            "reload",
+            "--wait",
+          ]
