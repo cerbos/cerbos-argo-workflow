@@ -31,12 +31,12 @@ kubectl patch deployment \
 ```
 
 ### Deploy Cerbos
-Make sure to edit the `demo-app/cerbos-values.yaml` file to point to your fork/repo.
+Make sure to edit the `cerbos-values.yaml` file to point to your fork/repo.
 
 ```sh
 helm repo add cerbos https://download.cerbos.dev/helm-charts
 helm repo update
-helm install cerbos cerbos/cerbos --version=0.23.1 --values=demo-app/cerbos-values.yaml
+helm install cerbos cerbos/cerbos --version=0.23.1 --values=cerbos-values.yaml
 ```
 
 ### Deploy Demo App
