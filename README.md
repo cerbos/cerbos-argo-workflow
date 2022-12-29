@@ -40,7 +40,15 @@ helm install cerbos cerbos/cerbos --version=0.23.1 --values=cerbos-values.yaml
 ```
 
 ### Deploy Demo App
-TODO
+
+```sh
+kubectl apply -f demo-app/k8s.yaml
+```
+
+Port forward into the cluster to see the demo app UI on [http://localhost:3000](http://localhost:3000)
+```sh
+kubectl port-forward deployment/demo-app 3000:3000
+```
 
 
 ## Update Policies
@@ -51,7 +59,7 @@ TODO
   ```
   argo submit -n argo --watch https://raw.githubusercontent.com/cerbos/cerbos-argo-workflow/main/ci.yaml -p branch=main -p repoPath=/cerbos -p repo=https://github.com/cerbos/cerbos-argo-workflow.git
   ```
-- Port forward into the cluster to see the job in the Argo UI
+- Port forward into the cluster to see the job in the Argo UI on [http://localhost:2746](http://localhost:2746)
   ```
   kubectl -n argo port-forward deployment/argo-server 2746:2746
   ```
