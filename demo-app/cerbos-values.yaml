@@ -1,26 +1,22 @@
 cerbos:
   config:
-    # Configure the git storage driver
+    server:
+      httpListenAddr: ":3592"
+      grpcListenAddr: ":3593"
+      adminAPI:
+        enabled: true
+        adminCredentials: # default credentials of cerbos:cerbosAdmin
+          username: cerbos
+          passwordHash: JDJ5JDEwJEdEOVFzZDE2VVhoVkR0N2VkUFBVM09nalc0QnNZaC9xc2E4bS9mcUJJcEZXenp5OUpjMi91Cgo=
     storage:
       driver: "git"
       git:
         protocol: https
         # Replace with the URL of your GitHub repo.
         url: https://github.com/cerbos/cerbos-argo-workflow.git
-        # Replace with the branch name of your repo.
         branch: main
-        # Remove or leave empty if the policies are not stored in a subdirectory.
         subDir: cerbos
-        # Path to checkout. By default, /work is a Kubernetes emptyDir volume that is only available for the lifetime of the pod.
-        # If you want the work directory to persist between pod restarts, specify the mount path of a persistent volume here.
         checkoutDir: /work
-        # How often the remote repo should be checked for updates.
-        updatePollInterval: 1h
+        updatePollInterval: 0
     telemetry:
       disabled: true
-    server:
-      adminAPI: # AdminAPI defines the admin API configuration.
-        adminCredentials: # AdminCredentials defines the admin user credentials.
-          passwordHash: JDJ5JDEwJEdEOVFzZDE2VVhoVkR0N2VkUFBVM09nalc0QnNZaC9xc2E4bS9mcUJJcEZXenp5OUpjMi91Cgo= # PasswordHash is the base64-encoded bcrypt hash of the password to use for authentication.
-          username: cerbos # Username is the hardcoded username to use for authentication.
-        enabled: true # Enabled defines whether the admin API is enabled.
