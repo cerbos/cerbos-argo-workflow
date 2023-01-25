@@ -28,7 +28,7 @@ tests:
         actions:
           view: EFFECT_ALLOW
           view:approver: EFFECT_DENY
-          delete: EFFECT_DENY
+          delete: EFFECT_ALLOW
           update: EFFECT_ALLOW
           approve: EFFECT_DENY
 
@@ -66,7 +66,7 @@ tests:
           view:approver: EFFECT_DENY
           delete: EFFECT_DENY
           update: EFFECT_DENY
-          approve: EFFECT_DENY          
+          approve: EFFECT_DENY
 
       - principal: sydney
         resource: expense1
@@ -111,7 +111,7 @@ tests:
           view:approver: EFFECT_DENY
           delete: EFFECT_DENY
           update: EFFECT_DENY
-          approve: EFFECT_DENY                     
+          approve: EFFECT_DENY
 
   - name: Sales Manager Role
     input:
@@ -130,7 +130,7 @@ tests:
         - update
         - delete
         - approve
-    expected:        
+    expected:
       - principal: mark
         resource: expense1
         actions:
@@ -174,8 +174,7 @@ tests:
           view:approver: EFFECT_DENY
           delete: EFFECT_DENY
           update: EFFECT_DENY
-          approve: EFFECT_DENY  
-
+          approve: EFFECT_DENY
 
       - principal: simon
         resource: expense1
@@ -220,4 +219,4 @@ tests:
           view:approver: EFFECT_DENY
           delete: EFFECT_DENY
           update: EFFECT_DENY
-          approve: EFFECT_DENY            
+          approve: EFFECT_DENY
